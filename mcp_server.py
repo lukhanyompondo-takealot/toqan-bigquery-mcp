@@ -1,7 +1,7 @@
 import os
 import json
 
-# 1. Force FastMCP to use Render's assigned dynamic port
+# Force FastMCP to use Render's assigned dynamic port
 os.environ["MCP_PORT"] = os.environ.get("PORT", "8000")
 os.environ["MCP_HOST"] = "0.0.0.0"
 
@@ -11,21 +11,29 @@ from google.oauth2 import service_account
 
 mcp = FastMCP("BigQueryRequestManager")
 
-# 2. Authenticate with Google Cloud securely
-creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
-if creds_json:
-    info = json.loads(creds_json)
-    credentials = service_account.Credentials.from_service_account_info(info)
-    client = bigquery.Client(project=info.get("project_id"), credentials=credentials)
-else:
-    # Fallback if testing locally
-    client = bigquery.Client()
+def get_bq_client():
+    """Helper to initialize the BigQuery client securely using the env variable."""
+    creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+    
+    if not creds_json:
+        raise RuntimeError(
+            "CRITICAL ERROR: 'GOOGLE_CREDENTIALS_JSON' environment variable is missing on Render. "
+            "Please add your GCP Service Account JSON key to your Render Environment settings."
+        )
+        
+    try:
+        info = json.loads(creds_json)
+        credentials = service_account.Credentials.from_service_account_info(info)
+        return bigquery.Client(project=info.get("project_id"), credentials=credentials)
+    except Exception as e:
+        raise RuntimeError(f"Failed to parse Google Credentials JSON: {str(e)}")
 
 @mcp.tool()
 def get_table_schema(project_id: str, dataset_id: str, table_id: str) -> str:
     """Fetches the schema of a BigQuery table."""
     table_ref = f"{project_id}.{dataset_id}.{table_id}"
     try:
+        client = get_bq_client()
         table = client.get_table(table_ref)
         schema_output = f"Current Schema for {table_ref}:\n"
         
