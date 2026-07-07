@@ -1,9 +1,9 @@
 import os
 import json
 
-# Force FastMCP to use Render's assigned dynamic port
-os.environ["MCP_PORT"] = os.environ.get("PORT", "8000")
-os.environ["MCP_HOST"] = "0.0.0.0"
+# Force FastMCP to use Render's assigned dynamic port and public interface
+os.environ["FASTMCP_PORT"] = os.environ.get("PORT", "8000")
+os.environ["FASTMCP_HOST"] = "0.0.0.0"
 
 from mcp.server.fastmcp import FastMCP
 from google.cloud import bigquery
