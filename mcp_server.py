@@ -1,11 +1,8 @@
 import os
 import json
 
-# Force FastMCP to use Render's assigned dynamic port and public interface
-os.environ["FASTMCP_PORT"] = os.environ.get("PORT", "8000")
-os.environ["FASTMCP_HOST"] = "0.0.0.0"
-
-from mcp.server.fastmcp import FastMCP
+# 1. Import from the dedicated web-friendly fastmcp library
+from fastmcp import FastMCP
 from google.cloud import bigquery
 from google.oauth2 import service_account
 
@@ -58,4 +55,6 @@ def generate_update_script(project_id: str, dataset_id: str, table_id: str, new_
     return f"I have collated the request! Here is the script for the DE team:\n\n```sql\n{sql_command}\n```"
 
 if __name__ == "__main__":
-    mcp.run(transport="sse")
+    # 2. Grab Render's dynamic port, and explicitly bind to 0.0.0.0
+    render_port = int(os.environ.get("PORT", "8000"))
+    mcp.run(transport="sse", host="0.0.0.0", port=render_port)
