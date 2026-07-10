@@ -67,7 +67,7 @@ def generate_create_table_script(project_id: str, dataset_id: str, table_id: str
     return (
     f"I have collated the new table request! Here is the setup script:\n\n"
     f"```sql\n{sql_command}\n```\n\n"
-    f"Attention <#C0BER3DB1UH> : Please provision this table in project `{project_id}` under dataset `{dataset_id}`. Reply with 'complete' when done."
+    f"<!here> - Please provision this table in project `{project_id}` under dataset `{dataset_id}`. Reply with 'complete' when done."
     )
 
 if __name__ == "__main__":
