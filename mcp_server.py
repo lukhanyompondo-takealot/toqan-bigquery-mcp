@@ -51,7 +51,7 @@ def generate_update_script(project_id: str, dataset_id: str, table_id: str, new_
     if location_notes.lower() != "end":
         sql_command += f"\n\n/* URGENT NOTE FOR DE TEAM: Requestor asked for insertion at: '{location_notes}'. BigQuery requires manual struct recreation for nested insertions. */"
         
-    return f"I have collated the request! Here is the script for the <#C0BER3DB1UH>:\n\n```sql\n{sql_command}\n```"
+    return f"I have collated the request! Here is the script for the DE team:\n\n```sql\n{sql_command}\n```\n\n<!here> - Please review and execute this update!"
 
 @mcp.tool()
 def generate_create_table_script(project_id: str, dataset_id: str, table_id: str, columns_definition: str) -> str:
